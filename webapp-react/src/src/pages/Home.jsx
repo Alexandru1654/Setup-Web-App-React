@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 function Home() {
     const movies = [
@@ -11,9 +11,13 @@ function Home() {
             <h1>Lista dei Film</h1>
             <div className="list-group">
                 {movies.map((movie) => (
-                    <a key={movie.id} href={`/movie/${movie.id}`} className="list-group-item list-group-item-action">
+                    <Link
+                        key={movie.id}
+                        to={`/movie/${movie.id}`}  
+                        className="list-group-item list-group-item-action"
+                    >
                         {movie.title}
-                    </a>
+                    </Link>
                 ))}
             </div>
         </div>
