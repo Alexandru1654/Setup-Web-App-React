@@ -13,7 +13,7 @@ function Home() {
                 {movies.map((movie) => (
                     <Link
                         key={movie.id}
-                        to={`/movie/${movie.id}`}  
+                        to={`/movie/${movie.id}`}
                         className="list-group-item list-group-item-action"
                     >
                         {movie.title}
@@ -25,3 +25,4 @@ function Home() {
 }
 
 export default Home;
+

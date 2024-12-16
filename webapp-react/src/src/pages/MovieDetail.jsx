@@ -1,13 +1,34 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import ReviewForm from "./ReviewForm";
+import axios from 'axios';
+import { useLoader } from "../context/LoaderContext";
 
 function MovieDetail() {
     const { id } = useParams();
-    const movies = [
-        { id: 1, title: "Movie 1", description: "Description of Movie 1", year: 2021, director: "Director 1" },
-        { id: 2, title: "Movie 2", description: "Description of Movie 2", year: 2022, director: "Director 2" },
-    ];
+    const [movie, setMovie] = useState(null);
+    const [reviews, setReviews] = useState([]);
+    const { showLoader, hideLoader } = useLoader();
 
-    const movie = movies.find((movie) => movie.id === parseInt(id));
+    useEffect(() => {
+        const fetchMovieData = async () => {
+            showLoader();
+
+            try {
+                const movieResponse = await axios.get(`http://localhost:5000/api/movies/${id}`);
+                const reviewsResponse = await axios.get(`http://localhost:5000/api/reviews/${id}`);
+
+                setMovie(movieResponse.data);
+                setReviews(reviewsResponse.data);
+            } catch (error) {
+                console.error('Errore nel recuperare i dati', error);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        fetchMovieData();
+    }, [id, showLoader, hideLoader]);
 
     if (!movie) {
         return <div>Film non trovato</div>;
@@ -19,9 +40,20 @@ function MovieDetail() {
             <p><strong>Anno:</strong> {movie.year}</p>
             <p><strong>Descrizione:</strong> {movie.description}</p>
             <p><strong>Direttore:</strong> {movie.director}</p>
+
+            <h2>Recensioni</h2>
+            <div className="list-group">
+                {reviews.map((review) => (
+                    <div key={review._id} className="list-group-item">
+                        <strong>{review.author}</strong> - {review.rating}⭐
+                        <p>{review.review}</p>
+                    </div>
+                ))}
+            </div>
+
+            <ReviewForm movieId={movie.id} />
         </div>
     );
 }
 
 export default MovieDetail;
-
